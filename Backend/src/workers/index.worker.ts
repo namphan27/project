@@ -1,0 +1,21 @@
+import { Job } from "bullmq";
+import { bullMq } from "../utils/bullmq";
+import { sendMailTemplate } from "../utils/mail";
+bullMq.createWorker("EMAIL_QUEUE", async (job: Job) => {
+  if (job.name === "send-mail-register") {
+    const data = job.data;
+    await sendMailTemplate(data.to, data.subject, data.template, data.option);
+  }
+
+  if (job.name === "send-email-verify") {
+    // Logic
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    console.log("send-email-verify");
+  }
+});
+
+bullMq.createWorker("SUBSCRIPTION_QUEUE", async (job: Job) => {
+  if (job.name === "subscription-expired") {
+    console.log(`Đang kiểm tra subscription user: ${job.data.userId}`);
+  }
+});

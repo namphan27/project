@@ -1,0 +1,10 @@
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  createdAt DateTime?  @default(now()) @db.Timestamp(0)
+  updatedAt DateTime?  @updatedAt
+  items     CartItem[]
+  user      User       @relation(fields: [userId], references: [id])
+
+  @@map("carts")
+}
