@@ -12,10 +12,12 @@ import { authController } from "../controllers/auth.controller";
 import { adminMiddleware, authMiddleware } from "../middleware/auth.middleware";
 import { categoryController } from "../controllers/category.controller";
 import { orderController } from "../controllers/order.controller";
+import { dashboardController } from "../controllers/admin/dashboard.controller";
 const router = express.Router();
 
 router.get("/", indexController.index);
 
+router.get("/products/search", productController.search);
 router.get("/products", productController.index);
 router.get("/products/:id", productController.show);
 router.post("/products", authMiddleware, adminMiddleware, productController.store);
@@ -45,5 +47,12 @@ router.post(
   "/auth/refresh-token",
   validate(refreshTokenSchema),
   authController.refreshToken,
+);
+
+router.get(
+  "/admin/dashboard/stats", 
+  authMiddleware, 
+  adminMiddleware, 
+  dashboardController.getStats
 );
 export default router;

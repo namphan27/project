@@ -4,7 +4,7 @@ import { prisma } from "../utils/prisma";
 
 export const orderService = {
   async createOrder(userId: number, data: CreateOrderDto) {
-    return await prisma.orders.create({
+    return await prisma.order.create({
       data: {
         userId,
         name: data.name,
@@ -23,7 +23,7 @@ export const orderService = {
   },
 
   async getOrders(userId: number) {
-    return await prisma.orders.findMany({
+    return await prisma.order.findMany({
       where: { userId },
       include: {
         items: true, 

@@ -26,7 +26,7 @@ export const authService = {
     }
     const accessToken = createAccessToken({
       id: user.id,
-      
+      role: user.role, 
     });
 
     const refreshToken = createRefreshToken({

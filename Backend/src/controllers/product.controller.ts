@@ -30,20 +30,16 @@ export const productController = {
     res.json(data);
   },
   search: async (req: Request, res: Response) => {
-    const q = req.query.q as string;
+    try {
+      const q = req.query.q as string;
+      if (!q) return res.json({ success: true, data: [] });
 
-    if (!q) {
-      return res.json({
-        success: true,
-        data: [],
-      });
+
+      const data = await productService.search(q);
+      return res.json({ success: true, data });
+    } catch (error) {
+      console.error("LỖI CHI TIẾT TẠI BACKEND:", error);
+      return res.status(500).json({ message: "Lỗi Server" });
     }
-
-    const data = await productService.search(q);
-
-    return res.json({
-      success: true,
-      data,
-    });
   },
 };

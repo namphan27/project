@@ -33,10 +33,10 @@ export type CartItem = Prisma.CartItemModel
  */
 export type Category = Prisma.CategoryModel
 /**
- * Model Orders
+ * Model Order
  * 
  */
-export type Orders = Prisma.OrdersModel
+export type Order = Prisma.OrderModel
 /**
  * Model OrderItem
  * 

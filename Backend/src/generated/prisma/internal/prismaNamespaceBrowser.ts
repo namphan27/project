@@ -54,7 +54,7 @@ export const ModelName = {
   Cart: 'Cart',
   CartItem: 'CartItem',
   Category: 'Category',
-  Orders: 'Orders',
+  Order: 'Order',
   OrderItem: 'OrderItem',
   Product: 'Product',
   User: 'User'
@@ -109,7 +109,7 @@ export const CategoryScalarFieldEnum = {
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
-export const OrdersScalarFieldEnum = {
+export const OrderScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   name: 'name',
@@ -120,7 +120,7 @@ export const OrdersScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type OrdersScalarFieldEnum = (typeof OrdersScalarFieldEnum)[keyof typeof OrdersScalarFieldEnum]
+export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
 
 
 export const OrderItemScalarFieldEnum = {
@@ -154,6 +154,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   password: 'password',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   name: 'name'
@@ -186,13 +187,13 @@ export const CategoryOrderByRelevanceFieldEnum = {
 export type CategoryOrderByRelevanceFieldEnum = (typeof CategoryOrderByRelevanceFieldEnum)[keyof typeof CategoryOrderByRelevanceFieldEnum]
 
 
-export const OrdersOrderByRelevanceFieldEnum = {
+export const OrderOrderByRelevanceFieldEnum = {
   name: 'name',
   phone: 'phone',
   address: 'address'
 } as const
 
-export type OrdersOrderByRelevanceFieldEnum = (typeof OrdersOrderByRelevanceFieldEnum)[keyof typeof OrdersOrderByRelevanceFieldEnum]
+export type OrderOrderByRelevanceFieldEnum = (typeof OrderOrderByRelevanceFieldEnum)[keyof typeof OrderOrderByRelevanceFieldEnum]
 
 
 export const ProductOrderByRelevanceFieldEnum = {
@@ -208,6 +209,7 @@ export type ProductOrderByRelevanceFieldEnum = (typeof ProductOrderByRelevanceFi
 export const UserOrderByRelevanceFieldEnum = {
   email: 'email',
   password: 'password',
+  role: 'role',
   name: 'name'
 } as const
 
