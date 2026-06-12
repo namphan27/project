@@ -51,4 +51,30 @@ export const cartController = {
       items: data?.items || data || [],
     });
   },
+  removeItem: async (req: Request, res: Response) => {
+    const userId = req.user?.id;
+    const { id } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const productId = Number(id);
+    if (isNaN(productId)) {
+      return res.status(400).json({ message: "ID sản phẩm không hợp lệ" });
+    }
+    try {
+      await cartService.removeItemFromCart(userId, productId);
+      const fullCartData = await cartService.getCart(userId);
+      return res.json({
+        success: true,
+        items: fullCartData?.items || [],
+      });
+    } catch (error) {
+      console.error("DEBUG LỖI XÓA:", error);
+
+      return res.status(500).json({
+        message: "Không thể xóa sản phẩm",
+      });
+    }
+  },
 };

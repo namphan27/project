@@ -3,7 +3,14 @@ import { prisma } from "../utils/prisma";
 
 export const productService = {
   async getAll() {
-    return await prisma.product.findMany();
+    return await prisma.product.findMany({
+      include: {
+        category: true, 
+      },
+      orderBy: {
+        createdAt: "desc", 
+      },
+    });
   },
 
   async getById(id: number) {

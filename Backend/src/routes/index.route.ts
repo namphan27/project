@@ -20,19 +20,37 @@ router.get("/", indexController.index);
 router.get("/products/search", productController.search);
 router.get("/products", productController.index);
 router.get("/products/:id", productController.show);
-router.post("/products", authMiddleware, adminMiddleware, productController.store);
-router.patch("/products/:id", authMiddleware, adminMiddleware, productController.update); 
-router.delete("/products/:id", authMiddleware, adminMiddleware, productController.delete);
+router.post(
+  "/products",
+  authMiddleware,
+  adminMiddleware,
+  productController.store,
+);
+router.patch(
+  "/products/:id",
+  authMiddleware,
+  adminMiddleware,
+  productController.update,
+);
+router.delete(
+  "/products/:id",
+  authMiddleware,
+  adminMiddleware,
+  productController.delete,
+);
 
 router.get("/cart", authMiddleware, cartController.getCart);
 router.post("/cart", authMiddleware, cartController.addToCart);
-router.post("/cart/merge", authMiddleware, cartController.mergeCart)
+router.post("/cart/merge", authMiddleware, cartController.mergeCart);
+router.delete("/cart/:id", authMiddleware, cartController.removeItem);
 
 router.get("/categories", categoryController.index);
 router.get("/categories/:slug", categoryController.show);
 
 router.post("/order", authMiddleware, orderController.createOrder);
-router.get("/order/:id", authMiddleware, orderController.getOrders);
+// router.get("/order/:id", authMiddleware, orderController.getOrders);
+router.get("/order/:id", authMiddleware, orderController.getOrderDetail);
+router.get("/order", authMiddleware, orderController.getAllOrders);
 
 router.post("/auth/login", validate(loginSchema), authController.login);
 router.post(
@@ -50,9 +68,9 @@ router.post(
 );
 
 router.get(
-  "/admin/dashboard/stats", 
-  authMiddleware, 
-  adminMiddleware, 
-  dashboardController.getStats
+  "/admin/dashboard/stats",
+  authMiddleware,
+  adminMiddleware,
+  dashboardController.getStats,
 );
 export default router;

@@ -38,4 +38,28 @@ export const userService = {
     });
     return user;
   },
+
+  async getAll() {
+    return prisma.user.findMany({
+      omit: {
+        password: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  },
+
+  async update(id: number, data: UserData) {
+    return prisma.user.update({
+      where: { id },
+      data,
+    });
+  },
+
+  async delete(id: number) {
+    return prisma.user.delete({
+      where: { id },
+    });
+  },
 };

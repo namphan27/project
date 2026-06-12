@@ -7,7 +7,7 @@ export const cartService = {
       include: {
         items: {
           include: {
-            product: true, 
+            product: true,
           },
         },
       },
@@ -89,5 +89,20 @@ export const cartService = {
     }
 
     return cartService.getCart(userId);
+  },
+
+  async removeItemFromCart(userId: number, productId: number) {
+    const cart = await prisma.cart.findUnique({
+      where: { userId: userId }, 
+    });
+
+    if (!cart) throw new Error("Giỏ hàng không tồn tại");
+
+    return await prisma.cartItem.deleteMany({
+      where: {
+        cartId: cart.id,
+        productId: Number(productId), 
+      },
+    });
   },
 };

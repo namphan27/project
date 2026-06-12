@@ -18,4 +18,3 @@ export const validate = (schema: z.ZodObject) => {
     next();
   };
 };
-//Mass assignment vulnerability

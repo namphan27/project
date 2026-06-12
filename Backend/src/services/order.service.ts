@@ -1,7 +1,6 @@
 import { CreateOrderDto } from "../schema/order.schema";
 import { prisma } from "../utils/prisma";
 
-
 export const orderService = {
   async createOrder(userId: number, data: CreateOrderDto) {
     return await prisma.order.create({
@@ -26,9 +25,32 @@ export const orderService = {
     return await prisma.order.findMany({
       where: { userId },
       include: {
+        items: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  },
+
+  async getAllOrders() {
+    return prisma.order.findMany({
+      include: {
+        items: true,
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  },
+  getOrderById: async (orderId: number, userId: number) => {
+    return await prisma.order.findFirst({
+      where: {
+        id: orderId,
+        userId: userId, 
+      },
+      include: {
         items: true, 
       },
-      orderBy: { createdAt: "desc" }, 
     });
   },
 };
