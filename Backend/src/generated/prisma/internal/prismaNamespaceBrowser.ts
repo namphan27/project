@@ -111,11 +111,15 @@ export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typ
 
 export const OrderScalarFieldEnum = {
   id: 'id',
+  orderCode: 'orderCode',
   userId: 'userId',
   name: 'name',
   phone: 'phone',
   address: 'address',
   total: 'total',
+  status: 'status',
+  paidAt: 'paidAt',
+  transactionId: 'transactionId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -191,7 +195,9 @@ export type CategoryOrderByRelevanceFieldEnum = (typeof CategoryOrderByRelevance
 export const OrderOrderByRelevanceFieldEnum = {
   name: 'name',
   phone: 'phone',
-  address: 'address'
+  address: 'address',
+  status: 'status',
+  transactionId: 'transactionId'
 } as const
 
 export type OrderOrderByRelevanceFieldEnum = (typeof OrderOrderByRelevanceFieldEnum)[keyof typeof OrderOrderByRelevanceFieldEnum]

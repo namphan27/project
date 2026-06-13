@@ -12,7 +12,7 @@ import { authController } from "../controllers/auth.controller";
 import { adminMiddleware, authMiddleware } from "../middleware/auth.middleware";
 import { categoryController } from "../controllers/category.controller";
 import { orderController } from "../controllers/order.controller";
-import { dashboardController } from "../controllers/admin/dashboard.controller";
+import { createPaymentLink, handleWebhook } from "../controllers/payment.controller";
 const router = express.Router();
 
 router.get("/", indexController.index);
@@ -66,11 +66,6 @@ router.post(
   validate(refreshTokenSchema),
   authController.refreshToken,
 );
-
-router.get(
-  "/admin/dashboard/stats",
-  authMiddleware,
-  adminMiddleware,
-  dashboardController.getStats,
-);
+router.post('/create-payment', createPaymentLink);
+router.post("/webhook", handleWebhook);
 export default router;

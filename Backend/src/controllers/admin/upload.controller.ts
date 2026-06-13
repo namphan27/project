@@ -10,7 +10,8 @@ export const uploadImage = (req: Request, res: Response) => {
     });
   }
 
-  const imageUrl = `${req.protocol}://${req.get('host')}/media/${file.filename}`;
+  // const imageUrl = `${req.protocol}://${req.get('host')}/media/${file.filename}`;
+  const imageUrl = `/media/${file.filename}`;
 
   res.status(200).json({ 
     success: true, 

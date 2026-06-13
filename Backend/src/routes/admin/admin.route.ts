@@ -9,6 +9,7 @@ import { orderController } from "../../controllers/order.controller";
 import { adminUserController } from "../../controllers/admin/adminAuth.controller";
 import upload from "../../middleware/update.middleware";
 import { uploadImage } from "../../controllers/admin/upload.controller";
+import { dashboardController } from "../../controllers/admin/dashboard.controller";
 
 const router = express.Router();
 router.use(authMiddleware);
@@ -34,4 +35,11 @@ router.delete("/users/:id", adminUserController.delete);
 router.get("/orders", orderController.getAllOrders);
 
 router.post("/upload", upload.single("image"), uploadImage);
+
+router.get(
+  "/dashboard/stats",
+  authMiddleware,
+  adminMiddleware,
+  dashboardController.getStats,
+);
 export default router;

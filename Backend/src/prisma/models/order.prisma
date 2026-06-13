@@ -1,5 +1,6 @@
 model Order {
-  id        Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  orderCode Int      @unique @default(0)
   userId    Int
 
   name      String
@@ -7,11 +8,16 @@ model Order {
   address   String
 
   total     Float
+  status    String   @default("PENDING")
+
+  paidAt    DateTime?     
+  transactionId String?   
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   items     OrderItem[]
-  user      User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
   @@map("orders")
 }
