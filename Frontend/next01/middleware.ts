@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { decodeJwt } from 'jose/jwt/decode'; 
+import { decodeJwt } from 'jose';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
