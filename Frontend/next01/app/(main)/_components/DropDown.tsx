@@ -36,11 +36,9 @@ export default function CartDropdown({ onClose }: { onClose: () => void }) {
   const token = Cookies.get("accessToken");
   if (!token) return;
 
-  // 1. Cập nhật UI ngay lập tức (Optimistic Update)
   dispatch(removeFromCart(id)); 
   toast.success("Đã xóa sản phẩm");
 
-  // 2. Gọi API để xóa ở Backend
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_API}/cart/${id}`,
@@ -53,13 +51,11 @@ export default function CartDropdown({ onClose }: { onClose: () => void }) {
     );
 
     if (!res.ok) {
-      // Nếu xóa server lỗi, cần báo cho người dùng và có thể load lại giỏ hàng
       throw new Error("Không thể xóa trên server");
     }
   } catch (err) {
     toast.error("Lỗi khi xóa trên server, vui lòng tải lại trang");
     console.error(err);
-    // Ở đây bạn có thể dispatch lại hàm lấy giỏ hàng từ server để đồng bộ lại nếu lỗi
   }
 };
   return (
