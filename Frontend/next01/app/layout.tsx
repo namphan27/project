@@ -2,11 +2,12 @@
 
 import { Toaster } from "react-hot-toast";
 import Header from "./(main)/_components/Header";
+import Cookies from "js-cookie";
 import "./globals.css";
 import Providers from "./provider";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "@/app/store/features/authSlice";
+import { finishLoading, loginSuccess } from "@/app/store/features/authSlice";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
@@ -17,8 +18,12 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const autoLogin = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
+      const token = Cookies.get("accessToken");
+      console.log("TOKEN:", token);
+      if (!token) {
+        dispatch(finishLoading());
+        return;
+      }
 
       try {
         const res = await fetch(
@@ -29,15 +34,23 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
             },
           },
         );
+        console.log(res.status);
         if (res.ok) {
-          const userData: User = await res.json();
+          const result = await res.json();
 
-          dispatch(loginSuccess({ user: userData }));
+          dispatch(
+            loginSuccess({
+              user: result.data,
+            }),
+          );
+          console.log("Dispatch xong");
         } else {
           localStorage.removeItem("accessToken");
         }
       } catch (err) {
         console.error("Lỗi tự động kết nối đăng nhập:", err);
+      } finally {
+        dispatch(finishLoading());
       }
     };
 

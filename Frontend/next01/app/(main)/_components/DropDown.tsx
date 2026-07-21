@@ -7,6 +7,7 @@ import { RootState } from "@/app/store/store";
 import { removeFromCart, setCart } from "@/app/store/features/cartSlice";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import axiosInstance from "../services/axios";
 type ExtendedCartItem = {
   id: number;
   quantity: number;
@@ -33,31 +34,19 @@ export default function CartDropdown({ onClose }: { onClose: () => void }) {
       }, 0)
     : 0;
   const handleRemove = async (id: number) => {
-  const token = Cookies.get("accessToken");
-  if (!token) return;
+    const token = Cookies.get("accessToken");
+    if (!token) return;
 
-  dispatch(removeFromCart(id)); 
-  toast.success("Đã xóa sản phẩm");
+    dispatch(removeFromCart(id));
+    toast.success("Đã xóa sản phẩm");
 
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_API}/cart/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("Không thể xóa trên server");
+    try {
+      const res = await axiosInstance.delete(`/cart/${id}`);
+    } catch (err) {
+      toast.error("Lỗi khi xóa trên server, vui lòng tải lại trang");
+      console.error(err);
     }
-  } catch (err) {
-    toast.error("Lỗi khi xóa trên server, vui lòng tải lại trang");
-    console.error(err);
-  }
-};
+  };
   return (
     <div className="absolute right-10 top-20 w-96 bg-white text-black shadow-xl rounded-lg p-4 z-50 border">
       <div className="flex justify-between items-center mb-3">
@@ -115,7 +104,7 @@ export default function CartDropdown({ onClose }: { onClose: () => void }) {
                   </div>
 
                   <button
-                    onClick={() => handleRemove(item.id)} 
+                    onClick={() => handleRemove(item.id)}
                     className="text-red-500 text-sm font-medium hover:underline cursor-pointer"
                   >
                     Xóa

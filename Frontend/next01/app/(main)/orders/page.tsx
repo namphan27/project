@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Link from "next/link";
+import axiosInstance from "../services/axios";
 interface Order {
   id: number | string;
   total: number;
@@ -18,22 +19,18 @@ export default function OrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        // const token = localStorage.getItem("accessToken");
-        const token = Cookies.get("accessToken");
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_API}/order`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        const data = await response.json();
-        setOrders(data);
+        const response = await axiosInstance.get("/order");
+
+        const data = response.data;
+
+        setOrders(Array.isArray(data) ? data : data.data || []);
       } catch (error) {
         console.error("Lỗi tải đơn hàng:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchOrders();
   }, []);
 

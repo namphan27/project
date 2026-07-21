@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Cookies from "js-cookie";
 import Image from "next/image";
+import axiosInstance from "../../services/axios";
 
 interface Product {
   name: string;
@@ -15,7 +16,7 @@ interface OrderItem {
   id: number;
   quantity: number;
   price: number;
-  product?: Product; 
+  product?: Product;
 }
 
 interface OrderDetail {
@@ -38,16 +39,9 @@ export default function OrderDetailPage() {
 
     const fetchDetail = async () => {
       try {
-        const token = Cookies.get("accessToken");
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_API}/order/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const response = await axiosInstance.get(`/order/${id}`);
 
-        const result: { success: boolean; data: OrderDetail } =
-          await response.json();
+        const result: { success: boolean; data: OrderDetail } = response.data;
 
         if (result.success) {
           setOrder(result.data);

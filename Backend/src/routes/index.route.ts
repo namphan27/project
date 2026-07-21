@@ -13,6 +13,7 @@ import { adminMiddleware, authMiddleware } from "../middleware/auth.middleware";
 import { categoryController } from "../controllers/category.controller";
 import { orderController } from "../controllers/order.controller";
 import { createPaymentLink, handleWebhook } from "../controllers/payment.controller";
+import { aiController } from "../controllers/ai.controller";
 const router = express.Router();
 
 router.get("/", indexController.index);
@@ -67,5 +68,6 @@ router.post(
   authController.refreshToken,
 );
 router.post('/create-payment', createPaymentLink);
+router.post("/ai/chat", aiController.chat);
 router.post("/webhook", handleWebhook);
 export default router;

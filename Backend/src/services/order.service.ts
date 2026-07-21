@@ -1,11 +1,12 @@
 import { CreateOrderDto } from "../schema/order.schema";
 import { prisma } from "../utils/prisma";
-
+import { randomUUID } from "crypto";
 export const orderService = {
   async createOrder(userId: number, data: CreateOrderDto) {
     return await prisma.order.create({
       data: {
         userId,
+        orderCode: `DH-${randomUUID().slice(0, 8)}`,
         name: data.name,
         phone: data.phone,
         address: data.address,
@@ -46,10 +47,10 @@ export const orderService = {
     return await prisma.order.findFirst({
       where: {
         id: orderId,
-        userId: userId, 
+        userId: userId,
       },
       include: {
-        items: true, 
+        items: true,
       },
     });
   },

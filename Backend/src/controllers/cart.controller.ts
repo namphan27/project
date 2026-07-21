@@ -8,7 +8,7 @@ export const cartController = {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const data = await cartService.getCart(userId);
-
+console.dir(data, { depth: null });
     return res.json({
       success: true,
       items: data?.items || data || [],
@@ -54,7 +54,7 @@ export const cartController = {
   removeItem: async (req: Request, res: Response) => {
     const userId = req.user?.id;
     const { id } = req.params;
-
+console.log("req.params.id =", req.params.id);
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }

@@ -193,6 +193,7 @@ export type CategoryOrderByRelevanceFieldEnum = (typeof CategoryOrderByRelevance
 
 
 export const OrderOrderByRelevanceFieldEnum = {
+  orderCode: 'orderCode',
   name: 'name',
   phone: 'phone',
   address: 'address',

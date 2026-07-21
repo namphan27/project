@@ -1,5 +1,6 @@
 import { Product } from "@/app/type/product.type";
 import ProductList from "../../products/ProductList";
+import axiosInstance from "../../services/axios";
 
 type Category = {
   id: number;
@@ -14,18 +15,15 @@ type CategoryResponse = {
 };
 
 const getCategory = async (slug: string): Promise<CategoryResponse> => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/categories/${slug}`,
-    {
-      cache: "no-store",
-    },
-  );
+  try {
+    const response = await axiosInstance.get<CategoryResponse>(
+      `/categories/${slug}`
+    );
 
-  if (!response.ok) {
+    return response.data;
+  } catch {
     throw new Error("Failed to fetch category");
   }
-
-  return response.json();
 };
 
 export default async function CategoryDetails({

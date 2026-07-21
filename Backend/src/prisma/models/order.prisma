@@ -1,6 +1,6 @@
 model Order {
   id        Int      @id @default(autoincrement())
-  orderCode Int      @unique @default(0)
+  orderCode String      @unique 
   userId    Int
 
   name      String

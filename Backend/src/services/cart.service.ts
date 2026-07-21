@@ -95,9 +95,8 @@ export const cartService = {
     const cart = await prisma.cart.findUnique({
       where: { userId: userId }, 
     });
-
+console.log("productId =", productId);
     if (!cart) throw new Error("Giỏ hàng không tồn tại");
-
     return await prisma.cartItem.deleteMany({
       where: {
         cartId: cart.id,
@@ -105,4 +104,5 @@ export const cartService = {
       },
     });
   },
+  
 };

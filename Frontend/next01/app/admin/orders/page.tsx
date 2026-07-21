@@ -1,5 +1,6 @@
 "use client";
 
+import axiosInstance from "@/app/(main)/services/axios";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -20,24 +21,13 @@ export default function OrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = Cookies.get("accessToken");
+        const res = await axiosInstance.get("/admin/orders");
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_API}/admin/orders`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (!res.ok) throw new Error("Lỗi fetch orders");
-
-        const data = await res.json();
+        const data = res.data;
 
         setOrders(Array.isArray(data) ? data : data.data || []);
-      } catch (err) {
+      } catch (error) {
+        console.error(error);
         toast.error("Không thể tải danh sách đơn hàng");
       } finally {
         setLoading(false);

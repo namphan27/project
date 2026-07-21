@@ -3,7 +3,16 @@
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Nav from "./Nav";
-import { Phone, User, ShoppingCart } from "lucide-react";
+import {
+  Phone,
+  User,
+  ShoppingCart,
+  Newspaper,
+  Truck,
+  Flame,
+  ShieldCheck,
+  Cpu,
+} from "lucide-react";
 import Link from "next/link";
 import { RootState } from "@/app/store/store";
 import { setCart } from "@/app/store/features/cartSlice";
@@ -11,15 +20,16 @@ import CartDropdown from "./DropDown";
 import SearchBox from "./Search";
 import { logout } from "@/app/store/features/authSlice";
 import Cookies from "js-cookie";
+import axiosInstance from "../services/axios";
 
 export default function Header() {
   const [openCart, setOpenCart] = useState(false);
   const [openUserMenu, setOpenUserMenu] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
-
+  const { user, loading } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user);
+
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
   const totalQty = cartItems
@@ -41,58 +51,94 @@ export default function Header() {
 
   useEffect(() => {
     const loadCart = async () => {
-      // const token = localStorage.getItem("accessToken");
       const token = Cookies.get("accessToken");
-      if (!token) return;
+
+      if (!token) {
+        return;
+      }
+
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/cart`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
+        const res = await axiosInstance.get("/cart");
+        const data = res.data;
+
         dispatch(setCart(data.items || []));
       } catch (err) {
         console.error("Lỗi tải giỏ hàng:", err);
       }
     };
+
     loadCart();
   }, [dispatch]);
 
   return (
-    <header className="bg-gray-600 text-white relative">
-      <div className="max-w-7xl mx-auto flex items-center justify-between p-3">
-        <Link href="/" className="text-2xl font-bold">
+    <header className="border-b bg-white shadow-sm mb-5">
+      <div className="mx-auto flex h-20 max-w-375 items-center gap-6 px-6">
+        <Link
+          href="/"
+          className="whitespace-nowrap text-4xl font-extrabold text-gray-900"
+        >
           PC Store
         </Link>
 
-        <div className="flex flex-1 mx-6">
+        <Nav />
+
+        <div className="flex-1">
           <SearchBox />
         </div>
 
-        <div className="flex gap-6 text-sm">
-          <div className="flex items-center gap-2">
-            <Phone size={18} />
-            <div>
-              <div>Hỗ trợ</div>
-              <div className="font-bold">01234567890</div>
+        <div className="grid w-108 grid-cols-3">
+          <div className="flex cursor-pointer items-center justify-center gap-3 transition hover:text-red-600">
+            <Phone size={24} className="text-red-600" />
+
+            <div className="leading-tight">
+              <p className="text-xs text-gray-500">Hotline</p>
+              <p className="font-semibold text-gray-800">01234567890</p>
             </div>
+          </div>
+
+          <div
+            onClick={() => setOpenCart(!openCart)}
+            className="relative flex cursor-pointer items-center justify-center gap-3 transition hover:text-red-600"
+          >
+            <ShoppingCart size={24} className="text-red-600" />
+
+            <div>
+              <p className="font-medium text-gray-800">Giỏ hàng</p>
+            </div>
+
+            {totalQty > 0 && (
+              <span className="absolute right-6 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white">
+                {totalQty}
+              </span>
+            )}
           </div>
 
           <div className="relative" ref={userMenuRef}>
             <div
-              className="flex items-center gap-2 cursor-pointer hover:text-yellow-300 transition"
               onClick={() => setOpenUserMenu(!openUserMenu)}
+              className="flex cursor-pointer items-center justify-center gap-3 transition hover:text-red-600"
             >
-              <User size={18} />
-              <div>
-                {user ? (
+              <User size={24} className="text-red-600" />
+
+              <div className="leading-tight">
+                {loading ? (
+                  <div className="h-5 w-24 animate-pulse rounded bg-gray-200" />
+                ) : user ? (
                   <>
-                    <div className="text-[10px] uppercase">Xin chào</div>
-                    <div className="font-bold">{user.name}</div>
+                    <p className="text-[11px] uppercase text-gray-500">
+                      Xin chào
+                    </p>
+
+                    <p className="font-semibold text-gray-800">{user.name}</p>
                   </>
                 ) : (
                   <>
-                    <div>Tài khoản</div>
-                    <Link href="/auth/login" className="font-bold">
+                    <p className="text-xs text-gray-500">Tài khoản</p>
+
+                    <Link
+                      href="/auth/login"
+                      className="font-semibold text-gray-800"
+                    >
                       Đăng nhập
                     </Link>
                   </>
@@ -101,65 +147,69 @@ export default function Header() {
             </div>
 
             {openUserMenu && user && (
-              <div className="absolute right-0 top-12 w-48 bg-white text-black shadow-xl rounded-lg z-50 py-2 border overflow-hidden">
+              <div className="absolute right-0 top-16 z-50 w-56 overflow-hidden rounded-xl border bg-white shadow-xl">
                 <Link
                   href="/profile"
-                  className="block px-4 py-2 hover:bg-gray-100"
                   onClick={() => setOpenUserMenu(false)}
+                  className="block px-4 py-3 hover:bg-gray-100"
                 >
                   Thông tin cá nhân
                 </Link>
+
                 <Link
                   href="/orders"
-                  className="block px-4 py-2 hover:bg-gray-100 font-bold text-red-600"
                   onClick={() => setOpenUserMenu(false)}
+                  className="block px-4 py-3 hover:bg-gray-100"
                 >
                   Đơn hàng của tôi
                 </Link>
+
                 <button
                   onClick={() => {
                     dispatch(logout());
                     setOpenUserMenu(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                  className="w-full cursor-pointer px-4 py-3 text-left text-red-500 hover:bg-gray-100"
                 >
                   Đăng xuất
                 </button>
               </div>
             )}
           </div>
-
-          <div
-            className="flex items-center gap-2 cursor-pointer relative hover:text-yellow-300 transition"
-            onClick={() => setOpenCart(!openCart)}
-          >
-            <ShoppingCart size={18} />
-            <div>
-              Giỏ hàng
-              {totalQty > 0 && (
-                <span className="ml-1 font-bold text-yellow-300">
-                  ({totalQty})
-                </span>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
-      <div className="bg-white text-black">
-        <div className="max-w-7xl mx-auto flex items-center gap-6 p-3">
-          <Nav />
-          <div className="flex gap-6 text-sm text-gray-600">
-            <span className="hover:text-black cursor-pointer">
-              Hướng dẫn trả góp
-            </span>
-            <span className="hover:text-black cursor-pointer">
-              Chính sách vận chuyển
-            </span>
-            <span className="hover:text-black cursor-pointer">
-              Đổi trả & bảo hành
-            </span>
-          </div>
+      <div className="bg-red-600 py-4">
+        <div className="mx-auto flex max-w-375 gap-6 px-6">
+          <button className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white font-medium text-red-600 transition hover:bg-red-50 cursor-pointer">
+            <Link
+              href="/build-pc"
+              className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-full bg-white py-3 font-medium text-red-600 transition hover:bg-red-50"
+            >
+              <Cpu size={18} />
+              <span>Xây dựng cấu hình</span>
+            </Link>
+          </button>
+
+          <button className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-3 font-medium text-red-600 transition hover:bg-red-50 cursor-pointer">
+            <ShieldCheck size={18} />
+            <span>Thông tin bảo hành</span>
+          </button>
+
+          <button className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-3 font-medium text-red-600 transition hover:bg-red-50 cursor-pointer">
+            <Flame size={18} />
+            <span>Sản phẩm đang hot</span>
+          </button>
+
+          <button className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-3 font-medium text-red-600 transition hover:bg-red-50 cursor-pointer">
+            <Truck size={18} />
+            <span>Chính sách giao hàng</span>
+          </button>
+
+          <button className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white py-3 font-medium text-red-600 transition hover:bg-red-50 cursor-pointer">
+            <Newspaper size={18} />
+            <span>Tin tức công nghệ</span>
+          </button>
         </div>
       </div>
 

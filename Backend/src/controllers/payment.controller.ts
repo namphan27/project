@@ -50,12 +50,12 @@ export const handleWebhook = async (
     console.log(`Mã giao dịch: ${reference}`);
 
     const order = await prisma.order.findUnique({
-      where: { orderCode: Number(orderCode) },
+      where: { orderCode: String(orderCode) },
     });
 
     if (order && order.status !== "PAID") {
       await prisma.order.update({
-        where: { orderCode: Number(orderCode) },
+        where: { orderCode: String(orderCode) },
         data: {
           status: "PAID",
           paidAt: new Date(),

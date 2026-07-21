@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { ShoppingCart, Users, Package, TrendingUp } from "lucide-react";
+import axiosInstance from "../(main)/services/axios";
 
 type DashboardStats = {
   totalUsers: number;
@@ -16,20 +17,10 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_API}/admin/dashboard/stats`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+        const response = await axiosInstance.get("/admin/dashboard/stats");
 
-        if (!response.ok) throw new Error("Không thể lấy dữ liệu");
+        const result = response.data;
 
-        const result = await response.json();
         if (result.success) {
           setStats(result.data);
         }
@@ -39,6 +30,7 @@ export default function AdminDashboardPage() {
         setLoading(false);
       }
     };
+
     fetchStats();
   }, []);
 

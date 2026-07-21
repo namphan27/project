@@ -6,7 +6,11 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "@/app/store/store";
-import { decreaseQuantity, increaseQuantity, removeFromCart } from "@/app/store/features/cartSlice";
+import {
+  decreaseQuantity,
+  increaseQuantity,
+  removeFromCart,
+} from "@/app/store/features/cartSlice";
 // import {
 //   removeFromCart,
 //   increaseQuantity,
@@ -21,7 +25,7 @@ export default function CartPage() {
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + (item.product?.price ?? 0) * item.quantity,
     0,
   );
 
@@ -61,18 +65,20 @@ export default function CartPage() {
                 className="flex gap-4 p-4 border-b last:border-b-0"
               >
                 <Image
-                  src={item.image}
-                  alt={item.name}
+                  src={item.product?.image ?? ""}
+                  alt={item.product?.name ?? ""}
                   width={120}
                   height={120}
                   className="w-28 h-28 object-cover rounded-lg"
                 />
 
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg">{item.name}</h3>
+                  <h3 className="font-semibold text-lg">
+                    {item.product?.name}
+                  </h3>
 
                   <p className="text-red-600 font-bold mt-2">
-                    {item.price.toLocaleString("vi-VN")}đ
+                    {item.product?.price?.toLocaleString("vi-VN")}đ
                   </p>
 
                   <div className="flex items-center gap-3 mt-4">
@@ -103,7 +109,10 @@ export default function CartPage() {
                   </button>
 
                   <div className="font-bold">
-                    {(item.price * item.quantity).toLocaleString("vi-VN")}đ
+                    {(
+                      (item.product?.price ?? 0) * item.quantity
+                    ).toLocaleString("vi-VN")}
+                    đ
                   </div>
                 </div>
               </div>

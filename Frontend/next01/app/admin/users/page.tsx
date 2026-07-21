@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import Cookies from "js-cookie";
+import axiosInstance from "@/app/(main)/services/axios";
 type User = {
   id: number;
   name: string;
@@ -18,24 +18,13 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = Cookies.get("accessToken");
+        const res = await axiosInstance.get("/admin/users");
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_API}/admin/users`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        if (!res.ok) throw new Error("Lỗi fetch dữ liệu");
-
-        const data = await res.json();
+        const data = res.data;
 
         setUsers(Array.isArray(data) ? data : data.data || []);
-      } catch (err) {
+      } catch (error) {
+        console.error(error);
         toast.error("Không thể tải danh sách người dùng");
       } finally {
         setLoading(false);

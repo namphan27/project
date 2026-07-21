@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { AdminProduct, Product } from "@/app/type/product.type";
 import Cookies from "js-cookie";
+import axiosInstance from "@/app/(main)/services/axios";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProduct[]>([]);
@@ -28,29 +29,19 @@ export default function AdminProductsPage() {
     null,
   );
   const fetchProducts = async () => {
-    const token = Cookies.get("accessToken");
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_API}/products`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (!res.ok) throw new Error("Fetch failed");
-      const response = await res.json();
-      setProducts(response.data as AdminProduct[]);
-    } catch (err) {
+      const res = await axiosInstance.get("/products");
+
+      setProducts(res.data.data as AdminProduct[]);
+    } catch (error) {
+      console.error(error);
       toast.error("Lỗi khi tải danh sách");
     }
   };
-
-  useEffect(() => {
-    let isMounted = true;
-    if (isMounted) fetchProducts();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  fetchProducts();
+  // useEffect(() => {
+  //   fetchProducts();
+  // }, []);
 
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();

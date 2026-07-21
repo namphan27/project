@@ -1,3 +1,4 @@
+import AIChat from "./_components/AiChat";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 
@@ -9,7 +10,8 @@ export default function MainLayout({
   return (
     <>
       <Header />
-      <div className="max-w-[80%] mx-auto">{children}</div>
+      <div className="max-w-[80%] mx-auto mb-[5%]">{children}</div>
+      <AIChat />
       <Footer />
     </>
   );

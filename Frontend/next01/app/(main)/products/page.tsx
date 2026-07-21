@@ -3,6 +3,13 @@ import Image from "next/image";
 import React from "react";
 import ProductList from "./ProductList";
 import { Product } from "@/app/type/product.type";
+import axiosInstance from "../services/axios";
+import FeaturedCPU from "../_components/FeaturedCpu";
+import ProductCard from "../_components/ProductCard";
+import FeaturedVGA from "../_components/FeaturedVga";
+import FeaturedRAM from "../_components/FeaturedRam";
+import FeaturedSSD from "../_components/FeaturedSSD";
+import FeaturedMainboard from "../_components/FeaturedMain";
 
 // type ApiResponse = {
 //   success: boolean;
@@ -11,20 +18,9 @@ import { Product } from "@/app/type/product.type";
 
 const getProduct = async (): Promise<Product[]> => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_API}/products`,
-      {
-        cache: "no-store",
-      },
-    );
+    const response = await axiosInstance.get("/products");
 
-    console.log(response);
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch products");
-    }
-
-    const data = await response.json();
+    const data = response.data;
 
     console.log("API RESPONSE:", data);
 
@@ -39,7 +35,6 @@ const getProduct = async (): Promise<Product[]> => {
     return [];
   } catch (error) {
     console.error(error);
-
     return [];
   }
 };
@@ -48,8 +43,12 @@ export default async function ProductPage() {
   const products = await getProduct();
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      
       <ProductList products={products} />
+      <FeaturedCPU products={products} />
+      <FeaturedVGA products={products} />
+      <FeaturedRAM products={products} />
+      <FeaturedSSD products={products} />
+      <FeaturedMainboard products={products} />
     </div>
   );
 }

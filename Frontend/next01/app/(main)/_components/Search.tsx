@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/app/type/product.type";
+import axios from "axios";
+import axiosInstance from "../services/axios";
 
 export default function SearchBox() {
   const [q, setQ] = useState("");
@@ -25,28 +27,21 @@ export default function SearchBox() {
       const controller = new AbortController();
       abortRef.current = controller;
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_API}/products/search?q=${encodeURIComponent(
-          keyword,
-        )}`,
-        {
-          signal: controller.signal,
+      const res = await axiosInstance.get("/products/search", {
+        params: {
+          q: keyword,
         },
-      );
+        signal: controller.signal,
+      });
 
-      if (!res.ok) {
-        setResults([]);
+      setResults(Array.isArray(res.data?.data) ? res.data.data : []);
+    } catch (error: unknown) {
+      if (axios.isCancel(error)) {
         return;
       }
 
-      const data = await res.json();
-
-      setResults(Array.isArray(data?.data) ? data.data : []);
-    } catch (error: unknown) {
-      if (error instanceof Error && error.name !== "AbortError") {
-        console.error(error);
-        setResults([]);
-      }
+      console.error(error);
+      setResults([]);
     }
   };
 
@@ -72,10 +67,10 @@ export default function SearchBox() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Tìm sản phẩm..."
-          className="w-full rounded-l bg-white p-2 text-black outline-none"
+          className="w-full rounded-full border bg-white p-2 text-black outline-none"
         />
 
-        <button type="button" className="rounded-r bg-white px-4 text-gray-600">
+        <button type="button" className="rounded-r absolute top-3 right-0 cursor-pointer bg-white px-4 text-gray-600">
           <Search size={18} />
         </button>
       </div>

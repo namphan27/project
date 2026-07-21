@@ -15,30 +15,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   try {
-  //     setLoading(true);
-  //     const res = await loginApi(email, password);
-
-  //     console.log("LOGIN RES:", res);
-  //     localStorage.setItem("accessToken", res.data.accessToken);
-  //     localStorage.setItem("refreshToken", res.data.refreshToken);
-
-  //     console.log("TOKEN SAVED:", localStorage.getItem("accessToken"));
-  //     const user = await profileApi();
-  //     dispatch(loginSuccess({ user }));
-  //     router.push("/");
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       alert(error.message);
-  //     } else {
-  //       alert("Đăng nhập thất bại");
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,15 +22,23 @@ export default function LoginPage() {
       setLoading(true);
       const res = await loginApi(email, password);
 
-      document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=86400; SameSite=Lax`;
+      // document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=86400; SameSite=Lax`;
+      Cookies.set("accessToken", res.data.accessToken, {
+        expires: 1,
+        sameSite: "Lax",
+      });
 
+      Cookies.set("refreshToken", res.data.refreshToken, {
+        expires: 7,
+        sameSite: "Lax",
+      });
       const user = await profileApi();
       dispatch(loginSuccess({ user }));
 
       if (user.role === "ADMIN") {
-        router.push("/admin"); 
+        router.push("/admin");
       } else {
-        router.push("/"); 
+        router.push("/");
       }
     } catch (error) {
       alert("Đăng nhập thất bại");
@@ -73,8 +57,8 @@ export default function LoginPage() {
         dispatch(loginSuccess({ user }));
       } catch (err) {
         console.log("invalid token");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
       }
     };
 
