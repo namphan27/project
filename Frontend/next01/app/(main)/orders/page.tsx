@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import Link from "next/link";
 import axiosInstance from "../services/axios";
 interface Order {

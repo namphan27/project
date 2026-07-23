@@ -49,68 +49,69 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
 
   const handleProcessOrder = async () => {
-  if (!form.name || !form.phone || !form.address) {
-    alert("Vui lòng nhập đầy đủ thông tin nhận hàng!");
-    return;
-  }
+    if (!form.name || !form.phone || !form.address) {
+      alert("Vui lòng nhập đầy đủ thông tin nhận hàng!");
+      return;
+    }
 
-  const token = Cookies.get("accessToken");
-  if (!token) {
-    alert("Vui lòng đăng nhập để đặt hàng!");
-    return;
-  }
+    const token = Cookies.get("accessToken");
+    if (!token) {
+      alert("Vui lòng đăng nhập để đặt hàng!");
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const formattedItems = cartItems.map((item) => {
-      const extendedItem = item as unknown as ExtendedCheckoutItem;
+    try {
+      const formattedItems = cartItems.map((item) => {
+        const extendedItem = item as unknown as ExtendedCheckoutItem;
 
-      return {
-        id: Number(extendedItem.id),
-        quantity: Number(extendedItem.quantity),
-        price: Number(extendedItem.product?.price || extendedItem.price || 0),
-        name: String(
-          extendedItem.product?.name || extendedItem.name || "Sản phẩm",
-        ),
-      };
-    });
-
-    const resOrder = await axiosInstance.post("/order", {
-      ...form,
-      items: formattedItems,
-      subtotal,
-      shippingFee,
-      total,
-      isPaid: false,
-    });
-
-    const orderResult = resOrder.data;
-
-    if (form.paymentMethod === "BANK_TRANSFER") {
-      const resPay = await axiosInstance.post("/create-payment", {
-        orderId: orderResult.id,
-        amount: total,
-        description: `DH${orderResult.id}`,
+        return {
+          id: Number(extendedItem.id),
+          quantity: Number(extendedItem.quantity),
+          price: Number(extendedItem.product?.price || extendedItem.price || 0),
+          name: String(
+            extendedItem.product?.name || extendedItem.name || "Sản phẩm",
+          ),
+        };
       });
 
-      const payData = resPay.data;
+      const resOrder = await axiosInstance.post("/order", {
+        ...form,
+        items: formattedItems,
+        subtotal,
+        shippingFee,
+        total,
+        isPaid: false,
+      });
 
-      if (payData.success && payData.data) {
-        window.location.href = payData.data;
+      console.log(resOrder.data.data);
+      const orderResult = resOrder.data.data;
+
+      if (form.paymentMethod === "BANK_TRANSFER") {
+        const resPay = await axiosInstance.post("/create-payment", {
+          orderId: orderResult.id,
+          amount: total,
+          description: `DH${orderResult.id}`,
+        });
+
+        const payData = resPay.data;
+
+        if (payData.success && payData.data) {
+          window.location.href = payData.data;
+        } else {
+          throw new Error(payData.message || "Lỗi tạo link thanh toán");
+        }
       } else {
-        throw new Error(payData.message || "Lỗi tạo link thanh toán");
+        alert("🎉 Đặt hàng COD thành công!");
+        window.location.href = "/orders";
       }
-    } else {
-      alert("🎉 Đặt hàng COD thành công!");
-      window.location.href = "/order";
+    } catch (error) {
+      alert("Lỗi: " + (error as Error).message);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    alert("Lỗi: " + (error as Error).message);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

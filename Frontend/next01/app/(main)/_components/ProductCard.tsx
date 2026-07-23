@@ -9,11 +9,7 @@ type Product = {
   image: string;
 };
 
-export default function ProductCard({
-  product,
-}: {
-  product: Product;
-}) {
+export default function ProductCard({ product }: { product: Product }) {
   return (
     <div className="overflow-hidden rounded-xl bg-white shadow transition hover:shadow-lg">
       <img
@@ -21,18 +17,14 @@ export default function ProductCard({
         alt={product.name}
         className="h-60 w-full object-contain p-4"
         onError={(e) => {
-          e.currentTarget.src = "/placeholder.png";
+          e.currentTarget.src = "https://image.voh.com.vn/voh/image/2024/05/17/default-avatar-141625.png?w=1400&q=85";
         }}
       />
 
       <div className="p-4">
-        <p className="text-xs uppercase text-gray-400">
-          NO BRAND
-        </p>
+        <p className="text-xs uppercase text-gray-400">NO BRAND</p>
 
-        <h2 className="mt-2 text-lg font-semibold">
-          {product.name}
-        </h2>
+        <h2 className="mt-2 text-lg font-semibold">{product.name}</h2>
 
         <div className="mt-4 flex items-center justify-between">
           <span className="text-2xl font-bold text-red-600">
