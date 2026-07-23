@@ -1,41 +1,53 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { decodeJwt } from 'jose';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { jwtVerify, decodeJwt } from "jose";
+
+const JWT_SECRET = process.env.JWT_SECRET; 
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const token = request.cookies.get('accessToken')?.value;
+  try {
+    const { pathname } = request.nextUrl;
+    const token = request.cookies.get("accessToken")?.value;
 
-  console.log(`[Middleware] Path: ${pathname}, HasToken: ${!!token}`);
-
-  if (pathname === '/auth/login') return NextResponse.next();
-
-  if (token) {
-    try {
-      const payload = decodeJwt(token);
-      const role = (payload.role as string)?.toUpperCase();
-      console.log(`[Middleware] User Role: ${role}`);
-
-      if (role === 'ADMIN') {
-        return NextResponse.next();
-      } else {
-        if (pathname.startsWith('/admin')) {
-          return NextResponse.redirect(new URL('/', request.url));
-        }
-      }
-    } catch (e) {
-      console.log("[Middleware] Token decode error:", e);
-      return NextResponse.redirect(new URL('/auth/login', request.url));
+    if (pathname === "/auth/login") {
+      return NextResponse.next();
     }
-  }
 
-  if (pathname.startsWith('/admin')) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
-  }
+    if (!token) {
+      if (pathname.startsWith("/admin")) {
+        return NextResponse.redirect(new URL("/auth/login", request.url));
+      }
+      return NextResponse.next();
+    }
 
-  return NextResponse.next();
+    let role: string | undefined;
+    try {
+      if (JWT_SECRET) {
+        const secret = new TextEncoder().encode(JWT_SECRET);
+        const { payload } = await jwtVerify(token, secret);
+        role = (payload.role as string)?.toUpperCase();
+      } else {
+        const payload = decodeJwt(token);
+        role = (payload.role as string)?.toUpperCase();
+      }
+    } catch (decodeError) {
+      console.error("[Middleware] Token invalid:", decodeError);
+      const res = NextResponse.redirect(new URL("/auth/login", request.url));
+      res.cookies.delete("accessToken"); 
+      return res;
+    }
+
+    if (pathname.startsWith("/admin") && role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    return NextResponse.next();
+  } catch (e) {
+    console.error("[Middleware] Unexpected error:", e);
+    return NextResponse.next();
+  }
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
